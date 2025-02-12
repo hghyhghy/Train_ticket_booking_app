@@ -22,7 +22,7 @@ export class TrainController{
 
 
     }
-
+    // find root for searching trains
     @Get('find')
     async getTrains(@Query('destination') destination:string){
         return this.trainService.findTrains(destination)
