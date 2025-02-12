@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Added useRouter
 
 interface TrainClass {
   id: number;
@@ -21,13 +22,15 @@ interface Train {
 
 export default function BookTrain() {
   const [destination, setDestination] = useState("");
+  const [source, setSource] = useState("");
   const [trains, setTrains] = useState<Train[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter(); // Added router for navigation
 
   const searchTrains = async () => {
-    if (!destination.trim()) {
-      setError("Please enter a valid destination.");
+    if (!source.trim() || !destination.trim()) {
+      setError("Please enter both source and destination.");
       return;
     }
 
@@ -57,9 +60,17 @@ export default function BookTrain() {
       <div className="w-full max-w-md flex flex-col items-center">
         <input
           type="text"
+          value={source}
+          onChange={(e) => setSource(e.target.value)}
+          placeholder="From"
+          className="border p-2 rounded w-full mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+        />
+
+        <input
+          type="text"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          placeholder="Enter Destination"
+          placeholder="To"
           className="border p-2 rounded w-full mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
         />
         
@@ -135,6 +146,14 @@ export default function BookTrain() {
                 </ul>
               </div>
             )}
+
+            {/* Book Button - Now inside the train card */}
+            <button
+              onClick={() => router.push(`/bookticket?trainId=${train.id}`)}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Book
+            </button>
           </div>
         ))}
       </div>
