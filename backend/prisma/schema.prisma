@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
   username String @unique
   password String
+  bookings Booking[]
 }
 
 model Train {
-  id          Int      @id @default(autoincrement())
-  trainNumber String   @unique
-  name        String
-  source      String
-  destination String
-  departure   DateTime @unique
+  id           Int          @id @default(autoincrement())
+  trainNumber  String       @unique
+  name         String
+  source       String
+  destination  String
+  departure    DateTime
+  arrival      DateTime     @unique  // ✅ Step 3: Now it's required
+  bookings     Booking[]
+  trainClasses TrainClass[] @relation("TrainToTrainClass")
+
+  @@unique([departure, arrival]) // ✅ Step 3: Add unique constraint
+}
+
+
+
+model Booking {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  trainId   Int
+  classId   Int
+  bookedAt  DateTime   @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  train      Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  trainClass TrainClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+}
+
+model TrainClass {
+  id        Int        @id @default(autoincrement())
+  trainId   Int
+  type      String
+  price     Int
+  train     Train      @relation(fields: [trainId], references: [id], name: "TrainToTrainClass")
+  bookings  Booking[]
+
+  @@unique([trainId, type]) // ✅ Ensuring unique train class per train
 }
