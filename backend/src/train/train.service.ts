@@ -25,10 +25,10 @@ export class TrainService{
 
     }
 
-    async findTrains(destination: string) {
+    async findTrains(destination: string,source:string) {
 
         return this.prisma.train.findMany({
-            where :{destination},
+            where :{destination,source},
             include:{
 
                 trainClasses:true

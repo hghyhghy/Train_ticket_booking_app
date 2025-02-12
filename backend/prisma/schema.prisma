@@ -42,6 +42,7 @@ model Booking {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   train      Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
   trainClass TrainClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  passengers Passenger[] 
 }
 
 model TrainClass {
@@ -53,4 +54,17 @@ model TrainClass {
   bookings  Booking[]
 
   @@unique([trainId, type]) // ✅ Ensuring unique train class per train
+}
+
+
+model Passenger {
+  id        Int     @id @default(autoincrement())
+  bookingId Int
+  name      String
+  gender    String
+  age       Int
+  email     String
+  phone     String
+
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
