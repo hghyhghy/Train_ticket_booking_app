@@ -8,7 +8,6 @@ export class BookingsService {
 
     constructor (private prisma:PrismaService){}
 
-  // ✅ Get Ticket Details
   async getTicketDetails(bookingId: number) {
     console.log("Received bookingId:", bookingId); // Debugging
 
@@ -43,9 +42,7 @@ export class BookingsService {
 
     async createBooking(dto:CreateBookingDto){
 
-        const {userId,trainId,classId,passengers} = dto
-        const farePerPassenger = 600; // Set this based on train class if needed
-        const totalFare = passengers.length * farePerPassenger;
+        const {userId,trainId,classId,passengers,totalFare} = dto
         const booking  = await this.prisma.booking.create({
 
             data:{
@@ -53,7 +50,7 @@ export class BookingsService {
                 userId:Number(userId),
                 trainId:Number(trainId),
                 classId:Number(classId),
-                // totalFare:totalFare,
+                totalFare:totalFare,
 
                 passengers: {
                     create: passengers.map((passenger) => ({
