@@ -1,5 +1,6 @@
 
-import { Injectable } from '@nestjs/common';
+import { Injectable,NotFoundException } from '@nestjs/common';
+import { Train } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -34,6 +35,19 @@ export class TrainService{
                 trainClasses:true
             }
         })
+    }
+
+    async getTrainById(id:number):Promise<Train>{
+          
+          const train =  await this.prisma.train.findUnique({
+            where:{id}
+          })
+          if (!train){
+            throw new NotFoundException("No trins found")
+          }
+
+          return train
+
     }
     
 }

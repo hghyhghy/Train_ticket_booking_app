@@ -1,6 +1,7 @@
 
-import { Controller, Get, Post, Param, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Param, Req, Query ,ParseIntPipe} from '@nestjs/common';
 import { TrainService } from './train.service';
+import { Train } from '@prisma/client';
 
 
 @Controller('trains')
@@ -27,4 +28,11 @@ export class TrainController{
     async getTrains(@Query('destination' ) destination:string , @Query('source') source:string){
         return this.trainService.findTrains(destination,source)
     }
+
+    // for filtering trains by id
+    @Get(":id")
+    async getTrainById(@Param('id',ParseIntPipe) id:number):Promise<Train>{
+        return this.trainService.getTrainById(id)
+    }
+
 }

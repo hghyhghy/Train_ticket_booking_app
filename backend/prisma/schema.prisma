@@ -38,12 +38,15 @@ model Booking {
   trainId   Int
   classId   Int
   bookedAt  DateTime   @default(now())
+  totalFare Int        @default(600)  // ✅ Default value
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   train      Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
   trainClass TrainClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-  passengers Passenger[] 
+  passengers Passenger[]
 }
+
+
 
 model TrainClass {
   id        Int        @id @default(autoincrement())
