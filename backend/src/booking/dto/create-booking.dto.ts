@@ -14,11 +14,11 @@ class PassengerDto{
     @IsInt()
     age:number
 
-    @IsEmail()
-    email:string
+    @IsString()
+    coachPosition:string
 
     @IsString()
-    phone:string
+    coachType:string
 
 }
 

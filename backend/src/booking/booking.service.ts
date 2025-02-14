@@ -57,8 +57,9 @@ export class BookingsService {
                       name: passenger.name,
                       gender: passenger.gender,
                       age:Number(passenger.age),
-                      email: passenger.email,
-                      phone: passenger.phone,
+                      coachPosition:passenger.coachPosition,
+                      coachType:passenger.coachType
+
                     })),
                   },
             },

@@ -44,6 +44,7 @@ model Booking {
   train      Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
   trainClass TrainClass @relation(fields: [classId], references: [id], onDelete: Cascade)
   passengers Passenger[]
+  payments   Payment[]
 }
 
 
@@ -61,13 +62,24 @@ model TrainClass {
 
 
 model Passenger {
-  id        Int     @id @default(autoincrement())
-  bookingId Int
-  name      String
-  gender    String
-  age       Int
-  email     String
-  phone     String
+  id            Int     @id @default(autoincrement())
+  name          String
+  gender        String
+  age           Int
+  coachPosition String  @default("Unknown") // Temporary default
+  coachType     String  @default("General") // Temporary default
+  bookingId     Int
+  booking       Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
 
-  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+model Payment {
+  id               Int      @id @default(autoincrement())
+  bookingId        Int
+  email            String
+  paymentMethod    String
+  verificationToken String  @unique
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+
+  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
