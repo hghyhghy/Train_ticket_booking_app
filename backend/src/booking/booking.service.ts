@@ -58,7 +58,10 @@ export class BookingsService {
                       gender: passenger.gender,
                       age:Number(passenger.age),
                       coachPosition:passenger.coachPosition,
-                      coachType:passenger.coachType
+                      coachType:passenger.coachType,
+                      Nationality:passenger.Nationality,
+                      Food:passenger.Food,
+                      Phonenumber:passenger.Phonenumber
 
                     })),
                   },

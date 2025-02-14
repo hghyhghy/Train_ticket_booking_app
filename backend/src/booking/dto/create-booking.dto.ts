@@ -20,6 +20,15 @@ class PassengerDto{
     @IsString()
     coachType:string
 
+    @IsString()
+    Food:string
+
+    @IsString()
+    Nationality:string
+
+    @IsString()
+    Phonenumber:string
+
 }
 
 export class CreateBookingDto{

@@ -22,11 +22,21 @@ export class PaymentController {
 
     }
 
-    @Post('verify')
+    @Get('verify')
     async verifyPayment(@Query('token') token:string){
         if (!token) {
             throw new BadRequestException('Token is required');
           }
         return this.paymentService.verifyPayment(token)
+    }
+
+    // code for checking status 
+    @Get('status/:bookingId')
+    async checkPaymentStatus(@Query('bookingId') bookingId:number){
+        if (!bookingId) {
+            throw new BadRequestException('Booking ID is required');
+        }
+
+        return this.paymentService.checkPaymentStatus(bookingId)
     }
 }
