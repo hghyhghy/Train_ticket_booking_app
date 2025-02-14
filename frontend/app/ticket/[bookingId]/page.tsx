@@ -70,9 +70,16 @@ export default function TicketPage() {
     }
   }, [bookingId]);
 
-  const handleprint=() => {
-      window.print()
-  }
+useEffect(() => {
+  const fetchBooking = async () => {
+    const response = await fetch(`http://localhost:3001/bookings/${bookingId}`);
+    const data = await response.json();
+    setTicket(data);
+  };
+
+  fetchBooking();
+}, [bookingId]);
+
 
   if (!ticket) {
     return (
@@ -152,7 +159,7 @@ export default function TicketPage() {
               </p>
               </div>
               <p className="text-gray-800">
-                <span className="font-bold">Type</span> {passenger.coachType}
+                <span className="font-bold">Type:</span> {passenger.coachType}
               </p>
             </div>
           ))}
@@ -211,7 +218,7 @@ export default function TicketPage() {
 
 
       </div>
-      {!ticket.paymentVerified ? (
+      {ticket.paymentVerified ? (
           <button
             onClick={() => router.push(`/payment/${bookingId}`)}
             className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-700 transition mt-5"
