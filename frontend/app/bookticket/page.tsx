@@ -13,7 +13,7 @@ export default function BookTicket() {
   const searchParams = useSearchParams();
   const trainId = searchParams.get("trainId");
   const [train, setTrain] = useState<{ name: string; source: string; destination: string; trainNumber:string; departure:string,arrival:string;trainClasses:TrainClass[] } | null>(null)
-  const [passengers, setPassengers] = useState([{ name: "", gender: "", age: "", email: "", phone: "" }]);
+  const [passengers, setPassengers] = useState([{ name: "", gender: "", age: "", coachPosition: "", coachType: "" }]);
   const [error, setError] = useState("");
   const router= useRouter()
 
@@ -32,7 +32,7 @@ export default function BookTicket() {
   
 
   const addPassenger = () => {
-    setPassengers([...passengers, { name: "", gender: "", age: "", email: "", phone: "" }]);
+    setPassengers([...passengers, { name: "", gender: "", age: "", coachPosition: "", coachType: "" }]);
     setError(""); // Clear error when adding a new passenger
   };
 
@@ -170,20 +170,27 @@ export default function BookTicket() {
             onChange={(e) => handleInputChange(index, "age", e.target.value)}
             className="border p-2 rounded w-full"
           />
-          <input
-            type="email"
-            placeholder="Email"
-            value={passenger.email}
-            onChange={(e) => handleInputChange(index, "email", e.target.value)}
-            className="border p-2 rounded w-full"
-          />
-          <input
-            type="tel"
-            placeholder="Phone"
-            value={passenger.phone}
-            onChange={(e) => handleInputChange(index, "phone", e.target.value)}
-            className="border p-2 rounded w-full"
-          />
+            <select
+              value={passenger.coachType}
+              onChange={(e) => handleInputChange(index, "coachType", e.target.value)}
+              className="border p-2 rounded"
+            >
+              <option value="">Select Coach Type</option>
+              <option value="Sleeper">Sleeper</option>
+              <option value="AC">AC</option>
+              <option value="General">Chair Car</option>
+            </select>
+            <select
+                value={passenger.coachPosition}
+                onChange={(e) => handleInputChange(index, "coachPosition", e.target.value)}
+                className="border p-2 rounded"
+              >
+                <option value="">Select Coach Position</option>
+                <option value="AC 3 Tier">AC 3 Tier</option>
+                <option value="AC 2 Tier">AC 2 Tier</option>
+                <option value="AC First">AC First</option>
+                <option value="S7">S1-S7</option>
+              </select>
                 <div className="flex flex-row gap-5 items-center w-full">
         <button onClick={addPassenger} className="bg-white text-blue-950 px-6 py-2 rounded w-44">
           + Add Passenger

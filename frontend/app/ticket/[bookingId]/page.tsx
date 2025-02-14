@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useParams } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
-
+import { useRouter } from "next/navigation";
 
 interface Passenger {
   id: number;
   name: string;
   gender: string;
   age: number;
-  email: string;
-  phone: string;
+  coachPosition: string;
+  coachType: string;
 }
 
 interface Train {
@@ -29,6 +29,7 @@ interface Booking {
   totalFare: number;
   train: Train;
   passengers: Passenger[];
+  paymentVerified: boolean;
 }
 
 export default function TicketPage() {
@@ -38,6 +39,12 @@ export default function TicketPage() {
   const [QrData, setQrData] = useState("")
   const [Pnrnumber, setPnrnumber] = useState("")
   const [transaction, settransaction] = useState("")
+  const [distance, setdistance] = useState<number|null>(null)
+  const router = useRouter()
+
+  const generateDistance=()=>{
+    return Math.floor(500 + Math.random()*501)
+  }
 
   const generatePnr = () => {
 
@@ -57,6 +64,7 @@ export default function TicketPage() {
           setQrData(uuidv4());
           setPnrnumber(generatePnr())
           settransaction(generatetransaction())
+          setdistance(generateDistance())
         })
         .catch(() => setError("Failed to fetch ticket details."));
     }
@@ -96,6 +104,12 @@ export default function TicketPage() {
                 {new Date(ticket.train.departure).toLocaleString()} |{" "}
                 <span className="font-bold">{ticket.train.source}</span>
               </p>
+            <div className="flex flex-col justify-center items-center absolute left-[45rem] top-48 ">
+            <h2 className="text-lg font-bold text-gray-800">
+              Distance
+            </h2>
+            <span className="text-blue-900">{distance} km</span>
+          </div>
           <div className="flex justify-center items-center mb-4 mt-2 mr-36">
           <h2 className="text-lg font-bold text-gray-800">
             PNR: <span className="text-blue-900">{Pnrnumber}</span>
@@ -130,15 +144,15 @@ export default function TicketPage() {
                 <span className="font-bold">Age:</span> {passenger.age}
               </p>
               
-              <div className=" flex flex-col">
+              <div className=" flex flex-row gap-2">
 
-              <span className="font-bold">Email:</span> 
+              <span className="font-bold">Coach:</span> 
               <p className="text-gray-800">
-                {passenger.email}
+                {passenger.coachPosition}
               </p>
               </div>
               <p className="text-gray-800">
-                <span className="font-bold">Phone:</span> {passenger.phone}
+                <span className="font-bold">Type</span> {passenger.coachType}
               </p>
             </div>
           ))}
@@ -197,12 +211,21 @@ export default function TicketPage() {
 
 
       </div>
-      <button
-            onClick={handleprint}
+      {!ticket.paymentVerified ? (
+          <button
+            onClick={() => router.push(`/payment/${bookingId}`)}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-700 transition mt-5"
+          >
+            Confirm Payment
+          </button>
+        ) : (
+          <button
+            onClick={() => window.print()}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition mt-5"
           >
             Print Ticket
           </button>
+        )}
     </div>
   );
 }
