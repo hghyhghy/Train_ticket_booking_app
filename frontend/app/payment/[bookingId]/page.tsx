@@ -4,9 +4,38 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
 
+interface Passenger {
+  id: number;
+  name: string;
+  gender: string;
+  age: number;
+  coachPosition: string;
+  coachType: string;
+  Food:string
+}
+
+interface Train {
+  name: string;
+  trainNumber: string;
+  source: string;
+  destination: string;
+  departure: string;
+  arrival: string;
+}
+
+interface Booking {
+  id: number;
+  totalFare: number;
+  train: Train;
+  passengers: Passenger[];
+  paymentVerified: boolean;
+}
+
 export default function PaymentPage() {
   const { bookingId } = useParams();
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [ticket, setTicket] = useState<Booking | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "phonepe">("card");
   const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false); // Track payment verification
@@ -33,10 +62,20 @@ export default function PaymentPage() {
 
     checkPaymentVerification();
   }, [bookingId]);
-
+  
+  useEffect(() => {
+    const fetchBooking = async () => {
+      const response = await fetch(`http://localhost:3001/bookings/${bookingId}`);
+      const data = await response.json();
+      setTicket(data);
+    };
+  
+    fetchBooking();
+  }, [bookingId]);
+  
   const handlePayment = async () => {
     if (!email) {
-      alert("Please enter your email.");
+      setErrorMessage("⚠️ Please enter your email for verification."); // Show error message
       return;
     }
 
@@ -87,16 +126,16 @@ export default function PaymentPage() {
           <>
             <div className="flex gap-4 justify-center mb-6">
               <button
-                className={`px-4 py-2 rounded-lg text-white ${
-                  paymentMethod === "card" ? "bg-blue-600" : "bg-gray-400"
+                className={`px-4 py-2 rounded text-black ${
+                  paymentMethod === "card" ? "bg-white border border-blue-950" : "bg-blue-600 text-white"
                 }`}
                 onClick={() => setPaymentMethod("card")}
               >
                 Pay with Card
               </button>
               <button
-                className={`px-4 py-2 rounded-lg text-white ${
-                  paymentMethod === "phonepe" ? "bg-blue-600" : "bg-gray-400"
+                className={`px-4 py-2 rounded text-black ${
+                  paymentMethod === "phonepe" ? "bg-white border border-blue-950" : "bg-blue-600 text-white"
                 }`}
                 onClick={() => setPaymentMethod("phonepe")}
               >
@@ -156,11 +195,16 @@ export default function PaymentPage() {
               />
             </div>
 
+            {errorMessage && (
+                <p className="text-red-600 text-sm font-semibold mt-2">{errorMessage}</p>
+              )}
+
+
             <button
               onClick={handlePayment}
-              className="w-full mt-4 bg-green-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-700 transition"
+              className="w-full mt-4 bg-blue-600 text-white px-6 py-2 rounded shadow-md hover:bg-green-700 transition"
             >
-              Pay
+              Pay ₹{ticket?.totalFare}
             </button>
           </>
         )}

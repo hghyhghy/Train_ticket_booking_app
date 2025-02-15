@@ -13,6 +13,7 @@ interface Passenger {
   age: number;
   coachPosition: string;
   coachType: string;
+  Food:string
 }
 
 interface Train {
@@ -139,7 +140,7 @@ useEffect(() => {
           {ticket.passengers.map((passenger, index) => (
             <div
               key={passenger.id}
-               className="grid grid-cols-5 bg-white p-4 shadow rounded-lg border border-gray-200 gap-x-7"
+               className="grid grid-cols-5 bg-white p-3 shadow rounded-lg border border-gray-200 gap-x-4"
             >
               <p className="text-gray-800">
                 <span className="font-bold">{index + 1}. Name:</span> {passenger.name}
@@ -150,6 +151,10 @@ useEffect(() => {
               <p className="text-gray-800">
                 <span className="font-bold">Age:</span> {passenger.age}
               </p>
+
+              <p className="text-gray-800">
+                <span className="font-bold">Food:</span> {passenger.Food}
+              </p>
               
               <div className=" flex flex-row gap-2">
 
@@ -158,9 +163,7 @@ useEffect(() => {
                 {passenger.coachPosition}
               </p>
               </div>
-              <p className="text-gray-800">
-                <span className="font-bold">Type:</span> {passenger.coachType}
-              </p>
+
             </div>
           ))}
         </div>

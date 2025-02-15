@@ -13,13 +13,17 @@ export default function BookTicket() {
   const searchParams = useSearchParams();
   const trainId = searchParams.get("trainId");
   const [train, setTrain] = useState<{ name: string; source: string; destination: string; trainNumber:string; departure:string,arrival:string;trainClasses:TrainClass[] } | null>(null)
-  const [passengers, setPassengers] = useState([{ name: "", gender: "", age: "", coachPosition: "", coachType: "",Nationality:"",Food:"",Phonenumber:"" }]);
+  const [passengers, setPassengers] = useState([{ name: "", gender: "", age: "", coachPosition: "", coachType: "",Nationality:"",Food:"" }]);
   const [error, setError] = useState("");
   const router= useRouter()
   const [distance, setdistance] = useState<number|null>(null)
   const [autoUpgrade, setAutoUpgrade] = useState(true);
   const [confirmBerth, setConfirmBerth] = useState(false);
   const [insurance, setInsurance] = useState("no");
+  const [phonenumber, setphonenumber] = useState("")
+  const [formvalid, setformvalid] = useState(false)
+
+
 
   const generatedistance=()=>{
     return Math.floor(500 + Math.random()*501)
@@ -39,10 +43,43 @@ export default function BookTicket() {
   
 
   }, [trainId])
-  
 
+
+  useEffect(() => {
+    const everyPassengerFilled = passengers.every((p) => 
+      p.name.trim() !== "" &&
+      p.gender !== "" &&
+      p.age.trim() !== "" &&
+      p.Nationality !== "" &&
+      p.coachPosition !== "" &&
+      p.coachType !== "" &&
+      p.Food !== ""
+    );
+  
+  
+    setformvalid(everyPassengerFilled);
+    setformvalid(true)
+  }, [passengers]); 
+  
+  const handleSubmit1 = async () => {
+    console.log("Form Valid Status:", formvalid); // Debugging log
+
+    if (!formvalid) {
+      setError("Please fill in all required fields before proceeding.");
+      return;
+    }
+  
+    console.log("Form is valid. Proceeding to payment...");
+    setError(""); // Clear any previous error
+    
+    if (formvalid){
+
+      // Now you can proceed with submission
+      handleSubmit();
+    }
+  }
   const addPassenger = () => {
-    setPassengers([...passengers, { name: "", gender: "", age: "", coachPosition: "", coachType: "",Nationality:"",Food:"",Phonenumber:"" }]);
+    setPassengers([...passengers, { name: "", gender: "", age: "", coachPosition: "", coachType: "",Nationality:"",Food:"" }]);
     setError(""); // Clear error when adding a new passenger
   };
 
@@ -74,6 +111,8 @@ export default function BookTicket() {
           totalFare, // Example fare calculation
         }),
       });
+
+
   
       const data = await res.json();
       console.log("Booking Response:", data); // ✅ Debugging response
@@ -98,7 +137,6 @@ export default function BookTicket() {
 
   return (
     <div className="min-h-screen flex flex-col  p-6  bg-white w-full items-start justify-start">
-      <h1 className="text-3xl font-bold mb-6  text-black">Enter Passenger Details</h1>
 
       {train ? (
         <div className="w-[65rem]  bg-white p-4 rounded shadow-md mb-6 text-black uppercase h-56 border border-blue-900">
@@ -134,7 +172,7 @@ export default function BookTicket() {
                 </p>
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center absolute left-[30rem] top-60 ">
+            <div className="flex flex-col justify-center items-center absolute left-[30rem] top-44 ">
             <h2 className="text-lg font-normal text-gray-800 uppercase">
               Distance
             </h2>
@@ -169,21 +207,20 @@ export default function BookTicket() {
         <div className=" text-black"> <h1 className="  font-semibold text-2xl">Contact Details</h1> </div>
         <div><p className=" text-black font-semibold">(Ticket details will be sent to email- su******@nsec.ac.in and registered mobile number 62******57)</p></div>
         <div>
-        {passengers.map((passenger,index) => (
-          <div key={index}  className="w-1/2">
+ 
+          <div   className="w-1/2">
 
           <input
             type="number"
             placeholder="Phonenumber"
-            value={passenger.Phonenumber}
-            onChange={(e) => handleInputChange(index, "Phonenumber", e.target.value)}
+            value={phonenumber}
+            onChange={(e) => setphonenumber(e.target.value)}
             className="border p-2 rounded w-full border-blue-950 text-black bg-[#F5F5F5]"
             required
           />
 
           </div>
 
-      ))} 
         </div>
       </div>
       <div className="w-[65rem] p-6 border border-blue-950 rounded bg-white text-black flex flex-col items-start justify-start gap-10 mb-4">
@@ -282,7 +319,7 @@ export default function BookTicket() {
     </div>
 
       {passengers.map((passenger, index) => (
-        <div key={index} className="p-4 rounded mb-3 flex flex-row gap-5 text-black items-center border border-blue-900">
+        <div key={index} className="p-4 rounded mb-3 flex flex-row  gap-2 text-black items-center">
           <input
             type="text"
             placeholder="Name"
@@ -349,8 +386,10 @@ export default function BookTicket() {
                 required
               >
                 <option value="">Food</option>
-                <option value="Non Indian">Non Veg</option>
-                <option value="Non Indian">Veg</option>
+                <option value="Non Veg">Non Veg</option>
+                <option value="Veg">Veg</option>
+                <option value="No Food">No Food</option>
+
 
 
               </select>
@@ -376,15 +415,19 @@ export default function BookTicket() {
 
       {error && <p className="text-red-600 font-semibold mt-2">{error}</p>}
 
-      <button onClick={deletePassenger} className="bg-white text-blue-950 px-4 py-2 rounded mt-2 border border-black">
+      <div className=" flex flex-row gap-2">
+
+
+      <button onClick={deletePassenger} className="bg-white text-blue-950 px-4 py-2 rounded mt-2 border border-black ">
         Delete Passenger
       </button>
 
-      (if )
+  
 
-      <button onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded mt-4 border border-black">
+      <button onClick={handleSubmit1}className={`px-4 py-2 rounded mt-2 border border-black ${formvalid ? "bg-blue-600 text-white" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}>
         Confirm Payment
       </button>
+      </div>
     </div>
   );
 }
