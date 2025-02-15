@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Added useRouter
+import { useRouter } from "next/navigation";
 
 interface TrainClass {
   id: number;
@@ -23,14 +23,30 @@ interface Train {
 export default function BookTrain() {
   const [destination, setDestination] = useState("");
   const [source, setSource] = useState("");
+  const [quota, setquota] = useState("GENERAL")
+  const [date, setDate] = useState("");
+  const [trainClass, setTrainClass] = useState("All Classes");
   const [trains, setTrains] = useState<Train[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter(); // Added router for navigation
+  const router = useRouter();
+  const [checkboxes, setCheckboxes] = useState({
+    disability: false,
+    flexibleDate: false,
+    availableBerth: false,
+  });
+
+  const handleCheckboxChange = (e:React.ChangeEvent<HTMLInputElement>)  => {
+
+    setCheckboxes({
+      ...checkboxes,
+      [e.target.value]:e.target.checked
+    })
+  }
 
   const searchTrains = async () => {
-    if (!source.trim() || !destination.trim()) {
-      setError("Please enter both source and destination.");
+    if (!source.trim() || !destination.trim()){
+      setError("Please enter all fields.");
       return;
     }
 
@@ -54,41 +70,105 @@ export default function BookTrain() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Book a Train</h1>
 
-      {/* Search Input */}
-      <div className="w-full max-w-md flex flex-col items-center">
-        <input
-          type="text"
-          value={source}
-          onChange={(e) => setSource(e.target.value)}
-          placeholder="From"
-          className="border p-2 rounded w-full mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-        />
+      <h1 className="text-3xl font-bold  mb-6  absolute top-10 font-mono text-blue-900">BOOK TICKET</h1>
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-2xl h-[30rem] flex flex-row gap-4">
 
-        <input
-          type="text"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          placeholder="To"
-          className="border p-2 rounded w-full mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-        />
-        
-        <button
-          onClick={searchTrains}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition"
-        >
-          Search Trains
-        </button>
+        <div className="flex flex-col gap-4 mb-4 w-1/2 mt-16">
+          <input
+            type="text"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            placeholder="From"
+            className="border p-2 rounded w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-950  border-blue-900"
+          />
 
-        {error && <p className="text-red-500 mt-2">{error}</p>}
+          <input
+            type="text"
+            value={destination}
+            onChange={(e) => setDestination(e.target.value)}
+            placeholder="To"
+            className="border p-2 rounded w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-950 mt-3 border-blue-900"
+          />
+
+          
+          <select
+            value={quota}
+            onChange={(e) => setquota(e.target.value)}
+            className="border p-2 rounded w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-950 mt-3  border-blue-900 "
+          >
+            <option>GENERAL</option>
+            <option>LADIES</option>
+            <option>LOWER BERTH/SR CITIZEN</option>
+            <option>PERSON WITH DISABILITY</option>
+            <option>DUTY PASS</option>
+            <option>TATKAL</option>
+            <option>PREMIUM TATKAL</option>
+          </select>
+
+          {/* <div className="flex flex-col gap-2 mb-4 mt-2 text-blue-950">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="disability" checked={checkboxes.disability} onChange={handleCheckboxChange} />
+            Person with Disabilities
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="flexibleDate" checked={checkboxes.flexibleDate} onChange={handleCheckboxChange} />
+            Flexible with Date
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="availableBerth" checked={checkboxes.availableBerth} onChange={handleCheckboxChange} />
+            Train with Available Berth
+          </label>
+        </div> */}
+        </div>
+
+
+
+        <div className="flex flex-col gap-4 mb-4 w-1/2 mt-16">
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="border p-2 rounded w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-950 border-blue-900"
+          />
+          <select
+            value={trainClass}
+            onChange={(e) => setTrainClass(e.target.value)}
+            className="border p-2 rounded w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-950 border-blue-900 mt-2"
+          >
+            <option>All Classes</option>
+            <option>Executive Chair Car (EC)</option>
+            <option>AC 3 Tier </option>
+            <option>AC 2 Tier</option>
+            <option>AC First</option>
+            <option>Visatdome Chair Car (VC)</option>
+            <option>AC Chair Car (CC)</option>
+            <option>Second Sitting (2S)</option>
+            <option>AC 3 Economy</option>
+            <option>Sleeper</option>
+
+
+
+          </select>
+        </div>
+
+
       </div>
 
-      {/* Loading State */}
-      {loading && <p className="text-gray-500 mt-4">Searching trains...</p>}
+      <div className=" -mt-36  flex  items-start justify-start  left-0">
 
-      {/* Trains List */}
-      <div className="w-[90rem] mt-6 space-y-6">
+
+      <button
+          onClick={searchTrains}
+          className="bg-blue-500 text-white  w-full  p-3 px-8 rounded  transition"
+          >
+          Search
+        </button>
+          </div>
+
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {loading && <p className="text-gray-500 mt-4">Searching trains...</p>}
+      <div className="w-[90rem] mt-36 space-y-6">
         {trains.length === 0 && !loading && !error && <p className="text-gray-600 text-center">No trains found.</p>}
 
         {trains.map((train) => (
